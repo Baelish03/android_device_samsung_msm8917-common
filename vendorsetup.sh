@@ -3,5 +3,4 @@ curl https://github.com/goldfish07/packages_modules_NetworkStack/commit/6fe388af
 cd -
 cd frameworks/base
 git reset --hard
-curl https://raw.githubusercontent.com/lineageos4microg/docker-lineage-cicd/master/src/signature_spoofing_patches/android_frameworks_base-R.patch | git apply || (echo "Failed to apply microg" && git reset --hard)
 cd -
