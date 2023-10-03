@@ -26,7 +26,6 @@
  */
 
 #include <vector>
-#include <functional>
 
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
 #include <sys/_system_properties.h>
@@ -40,11 +39,11 @@
 using android::base::GetProperty;
 using std::string;
 
-const std::vector<std::string> ro_props_default_source_order = {
+std::vector<std::string> ro_props_default_source_order = {
     "", "odm.", "product.", "system.", "system_ext.", "vendor.", "vendor_dlkm.",
 };
 
-static void property_override(char const prop[], char const value[], bool add = true) {
+void property_override(char const prop[], char const value[], bool add = true) {
   prop_info *pi;
 
   pi = (prop_info *)__system_property_find(prop);
@@ -54,7 +53,7 @@ static void property_override(char const prop[], char const value[], bool add = 
     __system_property_add(prop, strlen(prop), value, strlen(value));
 }
 
-static void set_ro_build_prop(const std::string &prop, const std::string &value,
+void set_ro_build_prop(const std::string &prop, const std::string &value,
                        bool product = true) {
   string prop_name;
 
@@ -68,21 +67,15 @@ static void set_ro_build_prop(const std::string &prop, const std::string &value,
   }
 }
 
-constexpr const char NFC_PREFIX = 'N';
-
-void vendor_load_properties(void) {
+void vendor_load_properties() {
   string model;
-
-  static std::function<bool(const std::string&)> endsWithN = [](const std::string& str) -> bool {
-	  return str.find(NFC_PREFIX) != std::string::npos;
-  }
 
   model = GetProperty("ro.boot.product.model", "");
   if (model.empty()) {
     model = GetProperty("ro.boot.em.model", "");
   }
 
-  if (endsWithN(model)) {
+  if (model == "SM-J415FN" || model == "SM-J415GN" || model == "SM-J610FN") {
     property_override("ro.boot.product.hardware.sku", "NFC");
   }
 
